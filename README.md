@@ -27,7 +27,7 @@
   <img src="docs/images/bot_profile_qr.png" width="250" alt="MyGO Bot Profile" />
 </p>
 
-🔗 **好友連結**: [點擊這裡加入 LINE 官方帳號](https://line.me/R/ti/p/@123456)
+🔗 **好友連結**: [點擊這裡加入 LINE 官方帳號](https://line.me/R/ti/p/@993xsepi)
 *(或搜尋 ID: @你的ID)*
 
 ---
@@ -82,4 +82,5 @@
     * 把 Channel Access Token 填回程式碼中。
 
 *It's MyGO!!!!!*
+
 
