@@ -27,7 +27,7 @@
   <img src="docs/images/bot_profile_qr.png" width="250" alt="MyGO Bot Profile" />
 </p>
 
-🔗 **好友連結**: [點擊這裡加入 LINE 官方帳號](https://line.me/R/ti/p/@你的ID)
+🔗 **好友連結**: [點擊這裡加入 LINE 官方帳號](https://line.me/R/ti/p/@123456)
 *(或搜尋 ID: @你的ID)*
 
 ---
@@ -81,9 +81,5 @@
     * 部署為網頁應用程式 (Web App)，並將網址填入 LINE Developers Console 的 Webhook URL。
     * 把 Channel Access Token 填回程式碼中。
 
----
+*It's MyGO!!!!!*
 
-## 📝 Author
-**[你的名字]**
-* 2026 Side Project
-* *It's MyGO!!!!!*
