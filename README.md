@@ -10,29 +10,38 @@
 > **「為什麼要演奏春日影！」**
 > **"Why did you play Haruhikage?!"**
 
-《BanG Dream! It's MyGO!!!!!》自播出以來，憑藉其沈重的人際關係描寫與胃痛劇情，在 ACG 圈內誕生了無數經典名言與梗圖。
-身為一個忠實觀眾 (MyGOer)，常常在聊天時想用某張特定的截圖（例如爽世的沈重表情、燈的迷茫眼神），卻在相簿裡翻半天找不到。
+這是預計於 **2026 年正式推廣** 的 Side Project。
+身為一個重度 MyGO 粉絲，我發現大家在群組聊天時，常常需要用到特定的截圖（例如爽世的沈重表情、燈的迷茫眼神）來進行「戰術性對話」。
 
-於是我在 **2026 年初** 開發了這個 **MyGO Meme Bot**。
-這是一個基於 LINE 的搜尋機器人，讓使用者輸入關鍵字（如：`春日影`, `一輩子`, `鬼屋`），就能快速召喚出對應的經典場景。
+為了讓大家能隨時隨地掏出梗圖，我開發了這個 **MyGO Meme Bot**。不需要存一堆圖在手機裡，只要輸入關鍵字，機器人就會從雲端資料庫把圖丟給你。
 
-*(目前專案剛建立，尚未正式對外宣傳，處於早期測試階段)*
+*(目前處於 Early Access 階段，尚未大規模宣傳)*
+
+---
+
+## 📲 立即試用 (Try it now)
+
+歡迎加入 **MyGO 截圖搜尋器** 好友，開始體驗關鍵字找圖功能！
+
+<p align="left">
+  <img src="docs/images/bot_profile_qr.png" width="250" alt="MyGO Bot Profile" />
+</p>
+
+🔗 **好友連結**: [點擊這裡加入 LINE 官方帳號](https://line.me/R/ti/p/@你的ID)
+*(或搜尋 ID: @你的ID)*
 
 ---
 
 ## 📸 功能展示 (Demo)
 
-### 1. 關鍵字搜尋 & 圖片回傳
-使用者輸入關鍵字後，機器人會從資料庫檢索相關標籤，並回傳對應的圖片 ID。
-輸入 ID 即可獲得高畫質截圖（適合拿來做貼圖或戰術性回覆）。
+### 1. 關鍵字模糊搜尋
+想找某個場景但忘記哪一集？輸入關鍵字（如：`春日影`, `一輩子`, `鬼屋`），機器人會列出相關的 ID 與字幕。
 
 ![Bot Demo](docs/images/bot_demo_chat.png)
 
-### 2. 輕量化後端 (Google Sheets as Database)
-為了降低維護成本，我沒有架設傳統資料庫，而是使用 **Google Sheets** 搭配 **Google Drive**。
-* **Google Drive**: 存放截圖檔案。
-* **Google Sheets**: 記錄 `File_ID`, `Tag` (字幕內容), `URL`。
-* **Auto-Sync**: 寫了一個 `sync` 腳本，只要我把圖片丟進 Drive，機器人會自動更新 Excel 列表，無需手動輸入。
+### 2. 自動化資料庫管理 (Admin Tools)
+為了便於維護，我寫了一個綁定在 Google Sheets 上的腳本 (`sheet_admin.gs`)。
+只要把截圖丟進 Google Drive 資料夾，按一下 Excel 上方的 **「MyGO 機器人管理」** 按鈕，所有的圖片連結與標籤就會自動同步到資料庫中，完全不需要手動 Key 資料。
 
 ![Database Preview](docs/images/database_preview.png)
 
@@ -40,40 +49,41 @@
 
 ## 🛠️ 技術架構 (Tech Stack)
 
-這個專案主打 **Serverless** 與 **Zero Cost** (零成本) 部署：
+考慮到這是一個個人興趣專案，我選擇了 **Serverless + Zero Cost** 的架構方案：
 
 * **Google Apps Script (GAS)**:
-    * 接收 LINE Messaging API 的 Webhook (`doPost`)。
-    * 處理邏輯判斷與關鍵字比對。
-* **Google Sheets API**:
-    * 充當關聯式資料庫 (Relational Database)，儲存圖片索引與標籤。
+    * `bot_main.gs`: 部署為 Web App，處理 LINE Webhook 的高併發請求。
+    * `sheet_admin.gs`: 綁定於試算表的 Container-bound Script，提供 GUI 管理介面。
+* **Google Sheets**:
+    * 作為輕量化關聯式資料庫 (Relational Database)，儲存 `ID`, `Tags`, `ImageURL`。
 * **Google Drive**:
-    * 作為圖床 (Image Hosting)，提供圖片的公開連結。
+    * 作為 CDN 圖床 (Image Hosting)。
 
-### 核心邏輯
-1.  **User** 傳送文字訊息 -> **LINE Server**。
-2.  LINE Server 觸發 Webhook -> **GAS Script**。
-3.  GAS 讀取 **Google Sheet** 進行模糊搜尋。
-4.  GAS 回傳結果列表或圖片 -> **User**。
+### 運作流程
+1.  **User** 輸入 "爽世" -> LINE Server。
+2.  LINE Server 呼叫 **GAS Webhook**。
+3.  GAS 快速掃描 **Google Sheet** 內容。
+4.  GAS 回傳圖片 Direct Link -> **User**。
+
+---
+
+## 🚀 部署指南 (Setup)
+
+如果你也想做一個自己的動漫梗圖機器人：
+
+1.  **準備素材**：
+    * 在 Google Drive 建立資料夾，將圖片命名為 `ID_關鍵字.jpg` (例如 `a001_為什麼要演奏春日影.jpg`)。
+2.  **建立後台**：
+    * 開一個新的 Google Sheet，將 `src/sheet_admin.gs` 的程式碼貼入「擴充功能 > Apps Script」。
+    * 執行 `onOpen`，你的試算表就會出現同步按鈕。
+3.  **連接 LINE Bot**：
+    * 建立另外一個 GAS 專案貼入 `src/bot_main.gs`。
+    * 部署為網頁應用程式 (Web App)，並將網址填入 LINE Developers Console 的 Webhook URL。
+    * 把 Channel Access Token 填回程式碼中。
 
 ---
 
-## 🚀 如何部署 (Setup)
-
-如果你也想做一個類似的「梗圖機器人」，可以參考以下步驟：
-
-1.  **準備資料庫**：
-    * 建立一個 Google Sheet，欄位包含 `ID`, `Tags`, `ImageURL`。
-    * 建立一個 Google Drive 資料夾存放圖片。
-2.  **建立 LINE Channel**：
-    * 至 LINE Developers Console 申請 Messaging API。
-    * 取得 `Channel Access Token`。
-3.  **部署程式碼**：
-    * 建立 Google Apps Script 專案。
-    * 複製 `src/main.gs` 內容。
-    * 填入你的 `TOKEN`, `SPREADSHEET_ID`, `FOLDER_ID`。
-    * 發布為網頁應用程式 (Web App)，並將網址填回 LINE Webhook URL。
-4.  **開始使用**：
-    * 加入機器人好友，開始輸入關鍵字！
-
----
+## 📝 Author
+**[你的名字]**
+* 2026 Side Project
+* *It's MyGO!!!!!*
